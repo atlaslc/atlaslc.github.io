@@ -1,0 +1,1185 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="用nvidia-docker跑深度学习模型, Atlas&#39;s blog">
+    <meta name="description" content="背景最近实验室要参加一个目标检测的比赛，这段时间一直在跑ssd模型，最开始根据作者给的文档成功编译后，可以在VOC数据集上进行训练。由于要用比赛官方的数据集，因此做了几天的数据集，然后拿自己的数据集训练的时候，出现了以下报错：Check f">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>用nvidia-docker跑深度学习模型 | Atlas&#39;s blog</title>
+    <link rel="icon" type="image/png" href="/medias/favicon.png">
+
+    <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
+    <link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+    <link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/matery.css">
+    <link rel="stylesheet" type="text/css" href="/css/my.css">
+    
+    <script src="/libs/jquery/jquery.min.js"></script>
+    
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
+
+
+<body>
+    <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper head-container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <img src="/medias/avatar.png" class="logo-img" alt="LOGO">
+                    
+                    <span class="logo-span">Atlas's blog</span>
+                </a>
+            </div>
+            
+
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fas fa-bars"></i></a>
+<ul class="right nav-menu">
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/" class="waves-effect waves-light">
+      
+      <i class="fas fa-home" style="zoom: 0.6;"></i>
+      
+      <span>首页</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/tags" class="waves-effect waves-light">
+      
+      <i class="fas fa-tags" style="zoom: 0.6;"></i>
+      
+      <span>标签</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/categories" class="waves-effect waves-light">
+      
+      <i class="fas fa-bookmark" style="zoom: 0.6;"></i>
+      
+      <span>分类</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/archives" class="waves-effect waves-light">
+      
+      <i class="fas fa-archive" style="zoom: 0.6;"></i>
+      
+      <span>归档</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/about" class="waves-effect waves-light">
+      
+      <i class="fas fa-user-circle" style="zoom: 0.6;"></i>
+      
+      <span>关于</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/friends" class="waves-effect waves-light">
+      
+      <i class="fas fa-address-book" style="zoom: 0.6;"></i>
+      
+      <span>友情链接</span>
+    </a>
+    
+  </li>
+  
+  <li>
+    <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+      <i id="searchIcon" class="fas fa-search" title="搜索" style="zoom: 0.85;"></i>
+    </a>
+  </li>
+</ul>
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <img src="/medias/avatar.png" class="logo-img circle responsive-img">
+        
+        <div class="logo-name">Atlas's blog</div>
+        <div class="logo-desc">
+            
+            Never really desperate, only the lost of the soul.
+            
+        </div>
+    </div>
+
+    
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li class="m-nav-item">
+	  
+		<a href="/" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-home"></i>
+			
+			首页
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/tags" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-tags"></i>
+			
+			标签
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/categories" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-bookmark"></i>
+			
+			分类
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/archives" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-archive"></i>
+			
+			归档
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/about" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-user-circle"></i>
+			
+			关于
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/friends" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-address-book"></i>
+			
+			友情链接
+		</a>
+          
+        </li>
+        
+        
+    </ul>
+</div>
+
+        </div>
+
+        
+    </nav>
+
+</header>
+
+    
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/8.jpg')">
+    <div class="container" style="right: 0px;left: 0px;">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <div class="description center-align post-title">
+                        用nvidia-docker跑深度学习模型
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<main class="post-container content">
+
+    
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+<style>
+    #articleContent h1::before,
+    #articleContent h2::before,
+    #articleContent h3::before,
+    #articleContent h4::before,
+    #articleContent h5::before,
+    #articleContent h6::before {
+        display: block;
+        content: " ";
+        height: 100px;
+        margin-top: -100px;
+        visibility: hidden;
+    }
+
+    #articleContent :focus {
+        outline: none;
+    }
+
+    .toc-fixed {
+        position: fixed;
+        top: 64px;
+    }
+
+    .toc-widget {
+        padding-left: 20px;
+    }
+
+    .toc-widget .toc-title {
+        margin: 35px 0 15px 0;
+        padding-left: 17px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    .toc-widget ol {
+        padding: 0;
+        list-style: none;
+    }
+
+    #toc-content ol {
+        padding-left: 10px;
+    }
+
+    #toc-content ol li {
+        padding-left: 10px;
+    }
+
+    #toc-content .toc-link:hover {
+        color: #42b983;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    #toc-content .toc-link::before {
+        background-color: transparent;
+        max-height: 25px;
+    }
+
+    #toc-content .is-active-link {
+        color: #42b983;
+    }
+
+    #toc-content .is-active-link::before {
+        background-color: #42b983;
+    }
+
+    #floating-toc-btn {
+        position: fixed;
+        right: 15px;
+        bottom: 76px;
+        padding-top: 15px;
+        margin-bottom: 0;
+        z-index: 998;
+    }
+
+    #floating-toc-btn .btn-floating {
+        width: 48px;
+        height: 48px;
+    }
+
+    #floating-toc-btn .btn-floating i {
+        line-height: 48px;
+        font-size: 1.4rem;
+    }
+</style>
+<div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- 文章内容详情 -->
+<div id="artDetail">
+    <div class="card">
+        <div class="card-content article-info">
+            <div class="row tag-cate">
+                <div class="col s7">
+                    
+                    <div class="article-tag">
+                        
+                            <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0-ssd-nvidia-docker/">
+                                <span class="chip bg-color">深度学习 ssd nvidia docker</span>
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+                <div class="col s5 right-align">
+                    
+                </div>
+            </div>
+
+            <div class="post-info">
+                
+                <div class="post-date info-break-policy">
+                    <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
+                    2019-10-30
+                </div>
+                
+
+                
+
+                
+                <div class="info-break-policy">
+                    <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
+                    2k
+                </div>
+                
+
+                
+                <div class="info-break-policy">
+                    <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
+                    8 分
+                </div>
+                
+				
+                
+                    <div id="busuanzi_container_page_pv" class="info-break-policy">
+                        <i class="far fa-eye fa-fw"></i>阅读次数:&nbsp;&nbsp;
+                        <span id="busuanzi_value_page_pv"></span>
+                    </div>
+				
+            </div>
+            
+        </div>
+        <hr class="clearfix">
+        <div class="card-content article-card-content">
+            <div id="articleContent">
+                <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>最近实验室要参加一个目标检测的比赛，这段时间一直在跑ssd模型，最开始根据作者给的文档成功编译后，可以在VOC数据集上进行训练。由于要用比赛官方的数据集，因此做了几天的数据集，然后拿自己的数据集训练的时候，出现了以下报错：Check failed: a &lt;= b (0 vs. -1.192093-07)</p>
+<p><img src="http://q04mztyeb.bkt.clouddn.com/image/nvidia-docker/pic_1.png" alt=""></p>
+<p>去网上搜了相关的解决方法，全都是说把math_functions.cpp第250行注释掉，重新编译，这种方案一看就不靠谱，而且也没人说个所以然，但是还是抱着试一试的心态照做了，果然又出现了新的bug。查了几天的资料也没找到解决方案，一开始我怀疑可能是我的数据集做的有问题，然后我又重新在VOC数据集上训练，结果会出现同样的问题，联想到前两天实验室服务器重装了系统，然后cuda从8.0换到了9.1版本，会不会是这个原因导致了现在的报错呢？但是因为实验室服务器是大家共用的，把cuda改回到8.0版本可能给其他人带来困扰，刚好实验室有其他同学在搞nvidia docker，干脆直接用nvidia docker来跑模型，就不用考虑环境问题了。</p>
+<h2 id="什么是nvidia-docker"><a href="#什么是nvidia-docker" class="headerlink" title="什么是nvidia docker"></a>什么是nvidia docker</h2><p>介绍nvidia docker之前，首先要了解什么是docker。</p>
+<blockquote>
+<p>Docker 是一个开源的应用容器引擎，基于 GO语言并遵从Apache2.0协议开源。</p>
+<p>Docker 可以让开发者打包他们的应用以及依赖包到一个轻量级、可移植的容器中，然后发布到任何流行的 Linux 机器上，可以实现虚拟化。</p>
+<p>Docker所代表的容器虚拟化技术属于操作系统级虚拟化：内核通过创建多个虚拟的操作系统实例（内核和库）来隔离不同的进程。并且传统虚拟化技术是在硬件层面实现虚拟化，增加了系统调用链路的环节，有性能损耗；容器虚拟化技术以共享Kernel的方式实现，几乎没有性能损耗。</p>
+<p>这里可以将容器理解为一种沙盒。每个容器内运行一个应用，不同的容器相互隔离，容器之间可以建立通信机制。容器的创建和停止都十分快速（秒级），容器自身对资源的需求十分有限，远比虚拟机本身占用的资源少。</p>
+</blockquote>
+<p>关于Docker更详细的介绍，请参照<a href="https://www.cnblogs.com/SzeCheng/p/6822905.html" target="_blank" rel="noopener">几张图帮你理解docker基本原理及快速入门</a>，感觉介绍的很不错</p>
+<p>docker一般服务于基于cpu 的应用，而我们的深度学习模型是跑在gpu上面的，因此需要用nvidia docker。nvidia docker的运行需要基于一定的硬件环境，需要安装nvidia driver，docker容器本身并不支持nvidia gpu。最开始的解决方法是在容器内部安装nvidia driver，然后通过设置相应的设备参数来启动container，但是这样做带来一个弊端就是可能导致image无法共享，因为宿主机的driver的版本必须完全匹配容器内的driver版本，很可能本地机器的不一致导致每台机器都需要去重复操作，这很大的违背了docker的初衷。nvidia docker实际上是一个docker plugin，它在docker上做了一层封装，对docker进行调用，类似一个守护进程，发现宿主机驱动文件以及gpu 设备，并且将这些挂载到来自docker守护进程的请求中，以此来支持docker gpu的使用。</p>
+<h2 id="安装docker"><a href="#安装docker" class="headerlink" title="安装docker"></a>安装docker</h2><ol>
+<li><strong>GPU driver安装</strong></li>
+</ol>
+<p>nvidia官网下载安装对应型号的显卡驱动：<a href="http://www.nvidia.com/Download/index.aspx?lang=en-us" target="_blank" rel="noopener">链接</a><br>如果安装成功，在终端中输入  lspci | grep -i nvidia ，会显示自己的NVIDIA GPU版本信息</p>
+<ol start="2">
+<li><strong>CUDA安装</strong></li>
+</ol>
+<p>实验室服务器是ubuntu 18.04版本，可以直接sudo apt install nvidia-cuda-toolkit安装</p>
+<ol start="3">
+<li><strong>docker安装</strong></li>
+</ol>
+<ul>
+<li>安装必要的一些系统工具</li>
+</ul>
+<pre class=" language-bash"><code class="language-bash"><span class="token function">sudo</span> <span class="token function">apt-get</span> -y <span class="token function">install</span> apt-transport-https ca-certificates curl software-properties-common</code></pre>
+<ul>
+<li>安装GPG证书</li>
+</ul>
+<pre class=" language-bash"><code class="language-bash">curl -fsSL http://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg <span class="token operator">|</span> <span class="token function">sudo</span> apt-key add -</code></pre>
+<ul>
+<li>写入软件源信息</li>
+</ul>
+<pre class=" language-bash"><code class="language-bash"><span class="token function">sudo</span> add-apt-repository <span class="token string">"deb [arch=amd64] http://mirrors.aliyun.com/docker-ce/linux/ubuntu <span class="token variable"><span class="token variable">$(</span>lsb_release -cs<span class="token variable">)</span></span> stable"</span></code></pre>
+<ul>
+<li>更新并安装 docker-ce</li>
+</ul>
+<pre class=" language-bash"><code class="language-bash"><span class="token function">sudo</span> <span class="token function">apt-get</span> -y update
+<span class="token function">sudo</span> <span class="token function">apt-get</span> -y <span class="token function">install</span> docker-ce</code></pre>
+<ul>
+<li>验证</li>
+</ul>
+<pre class=" language-bash"><code class="language-bash"><span class="token function">sudo</span> <span class="token function">service</span> docker status             <span class="token comment" spellcheck="true">#或者sudo systemctl status service.docker 检查Docker服务的状态 </span>
+<span class="token function">sudo</span> docker run hello-world            <span class="token comment" spellcheck="true">#测试Docker安装是否成功</span></code></pre>
+<p><img src="http://q04mztyeb.bkt.clouddn.com/image/nvidia-docker/pic_2.png" alt=""></p>
+<p><img src="http://q04mztyeb.bkt.clouddn.com/image/nvidia-docker/pic_3.png" alt=""></p>
+<ol start="4">
+<li><strong>nvidia-docker安装</strong></li>
+</ol>
+<ul>
+<li>如果之前安装过docker1.0版本，需要先删掉该版本和之前创建的容器</li>
+</ul>
+<pre class=" language-bash"><code class="language-bash">docker volume <span class="token function">ls</span> -q -f driver<span class="token operator">=</span>nvidia-docker <span class="token operator">|</span> <span class="token function">xargs</span> -r -I<span class="token punctuation">{</span><span class="token punctuation">}</span> -n1 docker <span class="token function">ps</span> -q -a -f volume<span class="token operator">=</span><span class="token punctuation">{</span><span class="token punctuation">}</span> <span class="token operator">|</span> <span class="token function">xargs</span> -r docker <span class="token function">rm</span> -f
+<span class="token function">sudo</span> <span class="token function">apt-get</span> purge -y nvidia-docker</code></pre>
+<ul>
+<li>添加代码仓库</li>
+</ul>
+<pre class=" language-bash"><code class="language-bash">curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey <span class="token operator">|</span> \
+<span class="token function">sudo</span> apt-key add -
+distribution<span class="token operator">=</span><span class="token variable"><span class="token variable">$(</span><span class="token keyword">.</span> /etc/os-release<span class="token punctuation">;</span><span class="token keyword">echo</span> $ID$VERSION_ID<span class="token variable">)</span></span>
+curl -s -L https://nvidia.github.io/nvidia-docker/<span class="token variable">$distribution</span>/nvidia-docker.list <span class="token operator">|</span> \
+<span class="token function">sudo</span> <span class="token function">tee</span> /etc/apt/sources.list.d/nvidia-docker.list
+<span class="token function">sudo</span> <span class="token function">apt-get</span> update</code></pre>
+<ul>
+<li>安装docker 2</li>
+</ul>
+<pre class=" language-bash"><code class="language-bash"><span class="token function">sudo</span> <span class="token function">apt-get</span> <span class="token function">install</span> -y nvidia-docker2
+<span class="token function">sudo</span> <span class="token function">pkill</span> -SIGHUP dockerd</code></pre>
+<ul>
+<li>测试</li>
+</ul>
+<pre class=" language-bash"><code class="language-bash">docker run --runtime<span class="token operator">=</span>nvidia --rm nvidia/cuda:9.0-base nvidia-smi</code></pre>
+<ol start="5">
+<li><p>安装过程中遇到的问题</p>
+<p>网上有的教程会设置阿里云加速器，是因为官方Docker Hub网络速度较慢，所以使用阿里云提供的Docker Hub，然后需要配置阿里云加速器。具体步骤如下：</p>
+</li>
+</ol>
+<pre class=" language-bash"><code class="language-bash"><span class="token function">sudo</span> <span class="token function">mkdir</span> -p /etc/docker
+<span class="token function">sudo</span> <span class="token function">tee</span> /etc/docker/daemon.json <span class="token operator">&lt;&lt;</span>-‘EOF’ 
+<span class="token punctuation">{</span> 
+“registry-mirrors”: <span class="token punctuation">[</span>“https://fird1mfg.mirror.aliyuncs.com“<span class="token punctuation">]</span> 
+<span class="token punctuation">}</span> 
+EOF
+<span class="token function">sudo</span> systemctl daemon-reload
+<span class="token function">sudo</span> systemctl restart docker</code></pre>
+<p>结果我在重启docker服务的时候，产生了如下报错：</p>
+<pre class=" language-bash"><code class="language-bash">docker.service - LSB: Create lightweight, portable, self-sufficient containers
+Loaded: loaded <span class="token punctuation">(</span>/etc/init.d/docker<span class="token punctuation">;</span> generated<span class="token punctuation">)</span>
+Active: failed <span class="token punctuation">(</span>Result: exit-code<span class="token punctuation">)</span> since Wed 2018-09-26 10:11:16 CST<span class="token punctuation">;</span> 28s ago
+Docs: man:systemd-sysv-generator<span class="token punctuation">(</span>8<span class="token punctuation">)</span>
+Process: 18639 ExecStart<span class="token operator">=</span>/etc/init.d/docker start <span class="token punctuation">(</span>code<span class="token operator">=</span>exited, status<span class="token operator">=</span>1/FAILULURE<span class="token punctuation">)</span>
+Main PID: 15621 <span class="token punctuation">(</span>code<span class="token operator">=</span>exited, status<span class="token operator">=</span>1/FAILURE<span class="token punctuation">)</span>
+
+9月 26 10:11:16 archlab-X10DRG systemd<span class="token punctuation">[</span>1<span class="token punctuation">]</span>: Starting LSB: Create lightweight, portable, self-sufficient containers<span class="token punctuation">..</span><span class="token punctuation">..</span>
+9月 26 10:11:16 archlab-X10DRG docker<span class="token punctuation">[</span>18639<span class="token punctuation">]</span>:  * /usr/bin/dockerd not present or not executable
+9月 26 10:11:16 archlab-X10DRG systemd<span class="token punctuation">[</span>1<span class="token punctuation">]</span>: docker.service: Control process exited, code<span class="token operator">=</span>exited status<span class="token operator">=</span>1
+9月 26 10:11:16 archlab-X10DRG systemd<span class="token punctuation">[</span>1<span class="token punctuation">]</span>: docker.service: Failed with result <span class="token string">'exit-code'</span><span class="token keyword">.</span>
+9月 26 10:11:16 archlab-X10DRG systemd<span class="token punctuation">[</span>1<span class="token punctuation">]</span>: Failed to start LSB: Create lightweight, portable, self-sufficient containers</code></pre>
+<p>根绝报错的第二行，发现是dockerd除了问题，dockerd是docker的守护进程，现在提示不存在或不可用，然后我执行了<code>sudo dockerd</code>,打印出了以下报错信息</p>
+<p>unable to configure the Docker daemon with file /etc/docker/daemon.json: invalid character ‘h’ after object key</p>
+<p>这说明docker的配置文件除了问题，打开daemon.json文件，果然发现刚才设置阿里云加速器的时候，写入的语句有问题，应该是我直接复制粘贴导致的问题，改正之后docker服务可以正常启动了。</p>
+<h2 id="用nvidia-docker进行训练"><a href="#用nvidia-docker进行训练" class="headerlink" title="用nvidia docker进行训练"></a>用nvidia docker进行训练</h2><ol>
+<li><p>拉取镜像（这里拉取了阿里云的一个镜像，里面自带了编译好的caffe，不过由于在实验室的宿主机上已经有编译好的caffe，可以直接将宿主机的目录挂载到容器中，这个后面有说）</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token function">sudo</span> nvidia-docker pull registry.cn-hangzhou.aliyuncs.com/docker_learning_aliyun/caffe:v1</code></pre>
+</li>
+<li><p>查看拉取的镜像信息</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token function">sudo</span> nvidia-docker images</code></pre>
+<p><img src="http://q04mztyeb.bkt.clouddn.com/image/nvidia-docker/pic_4.png" alt=""></p>
+</li>
+<li><p>利用拉取的镜像启动容器，并把宿主机的caffe目录挂载到容器上</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token function">sudo</span> nvidia-docker run -it –v <span class="token variable">$CAFFE_ROOT</span>:/workspace 4e33<span class="token punctuation">(</span>镜像id前4位即可）/bin/bash</code></pre>
+<p>这样就启动了一个容器，并且把caffe目录挂载到了容器的/workspace下。这样操作的好处是，训练完的数据可以直接存放在宿主机，省略了从容器中拷贝的繁琐步骤。</p>
+</li>
+</ol>
+<p>剩下的就是将caffe模型跑起来等待结果就可以了。</p>
+<script>
+        document.querySelectorAll('.github-emoji')
+          .forEach(el => {
+            if (!el.dataset.src) { return; }
+            const img = document.createElement('img');
+            img.style = 'display:none !important;';
+            img.src = el.dataset.src;
+            img.addEventListener('error', () => {
+              img.remove();
+              el.style.color = 'inherit';
+              el.style.backgroundImage = 'none';
+              el.style.background = 'none';
+            });
+            img.addEventListener('load', () => {
+              img.remove();
+            });
+            document.body.appendChild(img);
+          });
+      </script>
+            </div>
+            <hr/>
+
+            
+
+    <div class="reprint" id="reprint-statement">
+        
+            <div class="reprint__author">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-user">
+                        文章作者:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="http://atlaslc.github.io" rel="external nofollow noreferrer">Atlas</a>
+                </span>
+            </div>
+            <div class="reprint__type">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-link">
+                        文章链接:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="http://atlaslc.github.io/2019/10/30/yong-nvidia-docker-pao-shen-du-xue-xi-mo-xing/">http://atlaslc.github.io/2019/10/30/yong-nvidia-docker-pao-shen-du-xue-xi-mo-xing/</a>
+                </span>
+            </div>
+            <div class="reprint__notice">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-copyright">
+                        版权声明:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    本博客所有文章除特別声明外，均采用
+                    <a href="https://creativecommons.org/licenses/by/4.0/deed.zh" rel="external nofollow noreferrer" target="_blank">CC BY 4.0</a>
+                    许可协议。转载请注明来源
+                    <a href="http://atlaslc.github.io" target="_blank">Atlas</a>
+                    !
+                </span>
+            </div>
+        
+    </div>
+
+    <script async defer>
+      document.addEventListener("copy", function (e) {
+        let toastHTML = '<span>复制成功，请遵循本文的转载规则</span><button class="btn-flat toast-action" onclick="navToReprintStatement()" style="font-size: smaller">查看</a>';
+        M.toast({html: toastHTML})
+      });
+
+      function navToReprintStatement() {
+        $("html, body").animate({scrollTop: $("#reprint-statement").offset().top - 80}, 800);
+      }
+    </script>
+
+
+
+            <div class="tag_share" style="display: block;">
+                <div class="post-meta__tag-list" style="display: inline-block;">
+                    
+                        <div class="article-tag">
+                            
+                                <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0-ssd-nvidia-docker/">
+                                    <span class="chip bg-color">深度学习 ssd nvidia docker</span>
+                                </a>
+                            
+                        </div>
+                    
+                </div>
+                <div class="post_share" style="zoom: 80%; width: fit-content; display: inline-block; float: right; margin: -0.15rem 0;">
+                    <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+
+<div id="article-share">
+    
+    
+    <div class="social-share" data-sites="twitter,facebook,google,qq,qzone,wechat,weibo,douban,linkedin" data-wechat-qrcode-helper="<p>微信扫一扫即可分享！</p>"></div>
+    <script src="/libs/share/js/social-share.min.js"></script>
+    
+
+    
+
+</div>
+
+                </div>
+            </div>
+            
+                <style>
+    #reward {
+        margin: 40px 0;
+        text-align: center;
+    }
+
+    #reward .reward-link {
+        font-size: 1.4rem;
+        line-height: 38px;
+    }
+
+    #reward .btn-floating:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    #rewardModal {
+        width: 320px;
+        height: 350px;
+    }
+
+    #rewardModal .reward-title {
+        margin: 15px auto;
+        padding-bottom: 5px;
+    }
+
+    #rewardModal .modal-content {
+        padding: 10px;
+    }
+
+    #rewardModal .close {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 1.3rem;
+        line-height: 20px;
+        cursor: pointer;
+    }
+
+    #rewardModal .close:hover {
+        color: #ef5350;
+        transform: scale(1.3);
+        -moz-transform:scale(1.3);
+        -webkit-transform:scale(1.3);
+        -o-transform:scale(1.3);
+    }
+
+    #rewardModal .reward-tabs {
+        margin: 0 auto;
+        width: 210px;
+    }
+
+    .reward-tabs .tabs {
+        height: 38px;
+        margin: 10px auto;
+        padding-left: 0;
+    }
+
+    .reward-content ul {
+        padding-left: 0 !important;
+    }
+
+    .reward-tabs .tabs .tab {
+        height: 38px;
+        line-height: 38px;
+    }
+
+    .reward-tabs .tab a {
+        color: #fff;
+        background-color: #ccc;
+    }
+
+    .reward-tabs .tab a:hover {
+        background-color: #ccc;
+        color: #fff;
+    }
+
+    .reward-tabs .wechat-tab .active {
+        color: #fff !important;
+        background-color: #22AB38 !important;
+    }
+
+    .reward-tabs .alipay-tab .active {
+        color: #fff !important;
+        background-color: #019FE8 !important;
+    }
+
+    .reward-tabs .reward-img {
+        width: 210px;
+        height: 210px;
+    }
+</style>
+
+<div id="reward">
+    <a href="#rewardModal" class="reward-link modal-trigger btn-floating btn-medium waves-effect waves-light red">赏</a>
+
+    <!-- Modal Structure -->
+    <div id="rewardModal" class="modal">
+        <div class="modal-content">
+            <a class="close modal-close"><i class="fas fa-times"></i></a>
+            <h4 class="reward-title">你的赏识是我前进的动力</h4>
+            <div class="reward-content">
+                <div class="reward-tabs">
+                    <ul class="tabs row">
+                        <li class="tab col s6 alipay-tab waves-effect waves-light"><a href="#alipay">支付宝</a></li>
+                        <li class="tab col s6 wechat-tab waves-effect waves-light"><a href="#wechat">微 信</a></li>
+                    </ul>
+                    <div id="alipay">
+                        <img src="/medias/reward/alipay.jpg" class="reward-img" alt="支付宝打赏二维码">
+                    </div>
+                    <div id="wechat">
+                        <img src="/medias/reward/wechat.png" class="reward-img" alt="微信打赏二维码">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('.tabs').tabs();
+    });
+</script>
+            
+        </div>
+    </div>
+
+    
+
+    
+        <link rel="stylesheet" href="/libs/gitment/gitment-default.css">
+<link rel="stylesheet" href="/css/gitment.css">
+
+<div class="gitment-card card" data-aos="fade-up">
+    <div class="comment_headling" style="font-size: 20px; font-weight: 700; position: relative; left: 20px; top: 15px; padding-bottom: 5px;">
+        <i class="fas fa-comments fa-fw" aria-hidden="true"></i>
+        <span>评论</span>
+    </div>
+    <div id="gitment-content" class="card-content"></div>
+</div>
+
+<script src="/libs/gitment/gitment.js"></script>
+<script>
+var gitment = new Gitment({
+    id: 'Wed Oct 30 2019 16:27:58 GMT+0800',
+    owner: 'atalslc',
+    repo: 'blog-comment',
+    oauth: {
+        client_id: 'ad036e20be24a149f62e',
+        client_secret: 'cca443a07a3fbe6c62ccfbb3cc0daf6b55c5be8e'
+    }
+});
+
+gitment.render('gitment-content');
+</script>
+    
+
+    
+
+    
+
+    
+
+    
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
+            <div class="card">
+                <a href="/2019/10/30/yong-nvidia-docker-pao-shen-du-xue-xi-mo-xing/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/8.jpg" class="responsive-img" alt="用nvidia-docker跑深度学习模型">
+                        
+                        <span class="card-title">用nvidia-docker跑深度学习模型</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            背景最近实验室要参加一个目标检测的比赛，这段时间一直在跑ssd模型，最开始根据作者给的文档成功编译后，可以在VOC数据集上进行训练。由于要用比赛官方的数据集，因此做了几天的数据集，然后拿自己的数据集训练的时候，出现了以下报错：Check f
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2019-10-30
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-user fa-fw"></i>
+                            Atlas
+                            
+                        </span>
+                    </div>
+                </div>
+
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0-ssd-nvidia-docker/">
+                        <span class="chip bg-color">深度学习 ssd nvidia docker</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                本篇&nbsp;<i class="far fa-dot-circle"></i>
+            </div>
+            <div class="card">
+                <a href="/2019/10/30/yong-nvidia-docker-pao-shen-du-xue-xi-mo-xing/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/8.jpg" class="responsive-img" alt="用nvidia-docker跑深度学习模型">
+                        
+                        <span class="card-title">用nvidia-docker跑深度学习模型</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            背景最近实验室要参加一个目标检测的比赛，这段时间一直在跑ssd模型，最开始根据作者给的文档成功编译后，可以在VOC数据集上进行训练。由于要用比赛官方的数据集，因此做了几天的数据集，然后拿自己的数据集训练的时候，出现了以下报错：Check f
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2019-10-30
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-user fa-fw"></i>
+                            Atlas
+                            
+                        </span>
+                    </div>
+                </div>
+
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0-ssd-nvidia-docker/">
+                        <span class="chip bg-color">深度学习 ssd nvidia docker</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+
+</div>
+
+
+
+<!-- 代码块功能依赖 -->
+<script type="text/javascript" src="/libs/codeBlock/codeBlockFuction.js"></script>
+
+<!-- 代码语言 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeLang.js"></script>
+
+    
+<!-- 代码块复制 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeCopy.js"></script>
+
+
+<!-- 代码块收缩 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeShrink.js"></script>
+
+
+<!-- 代码块折行 -->
+
+<style type="text/css">
+code[class*="language-"], pre[class*="language-"] { white-space: pre !important; }
+</style>
+
+    </div>
+    <div id="toc-aside" class="expanded col l3 hide-on-med-and-down">
+        <div class="toc-widget">
+            <div class="toc-title"><i class="far fa-list-alt"></i>&nbsp;&nbsp;目录</div>
+            <div id="toc-content"></div>
+        </div>
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. -->
+
+<div id="floating-toc-btn" class="hide-on-med-and-down">
+    <a class="btn-floating btn-large bg-color">
+        <i class="fas fa-list-ul"></i>
+    </a>
+</div>
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            // headingsOffset: -205,
+            headingSelector: 'h2, h3, h4'
+        });
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('#articleContent').children('h2, h3, h4').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+        
+        /* 修复文章卡片 div 的宽度. */
+        let fixPostCardWidth = function (srcId, targetId) {
+            let srcDiv = $('#' + srcId);
+            if (srcDiv.length === 0) {
+                return;
+            }
+
+            let w = srcDiv.width();
+            if (w >= 450) {
+                w = w + 21;
+            } else if (w >= 350 && w < 450) {
+                w = w + 18;
+            } else if (w >= 300 && w < 350) {
+                w = w + 16;
+            } else {
+                w = w + 14;
+            }
+            $('#' + targetId).width(w);
+        };
+
+        // 切换TOC目录展开收缩的相关操作.
+        const expandedClass = 'expanded';
+        let $tocAside = $('#toc-aside');
+        let $mainContent = $('#main-content');
+        $('#floating-toc-btn .btn-floating').click(function () {
+            if ($tocAside.hasClass(expandedClass)) {
+                $tocAside.removeClass(expandedClass).hide();
+                $mainContent.removeClass('l9');
+            } else {
+                $tocAside.addClass(expandedClass).show();
+                $mainContent.addClass('l9');
+            }
+            fixPostCardWidth('artDetail', 'prenext-posts');
+        });
+        
+    });
+</script>
+
+    
+
+</main>
+
+
+
+    <footer class="page-footer bg-color">
+    <div class="container row center-align">
+        <div class="col s12 m8 l8 copy-right">
+            Copyright&nbsp;&copy;
+            <span id="year">年份</span>
+            <a href="http://atlaslc.github.io" target="_blank">Atlas</a>
+            |&nbsp;Powered by&nbsp;<a href="https://hexo.io/" target="_blank">Hexo</a>
+            |&nbsp;Theme&nbsp;<a href="https://github.com/blinkfox/hexo-theme-matery" target="_blank">Matery</a>
+            <br>
+            
+            &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
+                class="white-color">2k</span>&nbsp;字
+            
+            
+            
+            
+            
+            
+            <span id="busuanzi_container_site_pv">
+                |&nbsp;<i class="far fa-eye"></i>&nbsp;总访问量:&nbsp;<span id="busuanzi_value_site_pv"
+                    class="white-color"></span>&nbsp;次
+            </span>
+            
+            
+            <span id="busuanzi_container_site_uv">
+                |&nbsp;<i class="fas fa-users"></i>&nbsp;总访问人数:&nbsp;<span id="busuanzi_value_site_uv"
+                    class="white-color"></span>&nbsp;人
+            </span>
+            
+            <br>
+            
+            <span id="sitetime">载入运行时间...</span>
+            <script>
+                function siteTime() {
+                    window.setTimeout("siteTime()", 1000);
+                    var seconds = 1000;
+                    var minutes = seconds * 60;
+                    var hours = minutes * 60;
+                    var days = hours * 24;
+                    var years = days * 365;
+                    var today = new Date();
+                    var startYear = "2019";
+                    var startMonth = "10";
+                    var startDate = "31";
+                    var startHour = "0";
+                    var startMinute = "0";
+                    var startSecond = "0";
+                    var todayYear = today.getFullYear();
+                    var todayMonth = today.getMonth() + 1;
+                    var todayDate = today.getDate();
+                    var todayHour = today.getHours();
+                    var todayMinute = today.getMinutes();
+                    var todaySecond = today.getSeconds();
+                    var t1 = Date.UTC(startYear, startMonth, startDate, startHour, startMinute, startSecond);
+                    var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+                    var diff = t2 - t1;
+                    var diffYears = Math.floor(diff / years);
+                    var diffDays = Math.floor((diff / days) - diffYears * 365);
+                    var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+                    var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) /
+                        minutes);
+                    var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours -
+                        diffMinutes * minutes) / seconds);
+                    if (startYear == todayYear) {
+                        document.getElementById("year").innerHTML = todayYear;
+                        document.getElementById("sitetime").innerHTML = "本站已安全运行 " + diffDays + " 天 " + diffHours +
+                            " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒";
+                    } else {
+                        document.getElementById("year").innerHTML = startYear + " - " + todayYear;
+                        document.getElementById("sitetime").innerHTML = "本站已安全运行 " + diffYears + " 年 " + diffDays +
+                            " 天 " + diffHours + " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒";
+                    }
+                }
+                setInterval(siteTime, 1000);
+            </script>
+            
+            <br>
+            
+        </div>
+        <div class="col s12 m4 l4 social-link social-statis">
+    <a href="https://github.com/atalslc" class="tooltipped" target="_blank" data-tooltip="访问我的GitHub" data-position="top" data-delay="50">
+        <i class="fab fa-github"></i>
+    </a>
+
+
+
+    <a href="mailto:381496422@qq.com" class="tooltipped" target="_blank" data-tooltip="邮件联系我" data-position="top" data-delay="50">
+        <i class="fas fa-envelope-open"></i>
+    </a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+
+    <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fas fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script src="/js/search.js"></script>
+<script type="text/javascript">
+$(function () {
+    searchFunc("/" + "search.xml", 'searchInput', 'searchResult');
+});
+</script>
+    <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+</div>
+
+
+    <script src="/libs/materialize/materialize.min.js"></script>
+    <script src="/libs/masonry/masonry.pkgd.min.js"></script>
+    <script src="/libs/aos/aos.js"></script>
+    <script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+    <script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+    <script src="/js/matery.js"></script>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+    <!-- Baidu Analytics -->
+
+    <!-- Baidu Push -->
+
+<script>
+    (function () {
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+
+    
+    
+    <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <script type="text/javascript" src="/libs/background/ribbon-dynamic.js" async="async"></script>
+    
+    
+    
+    <script src="/libs/instantpage/instantpage.js" type="module"></script>
+    
+
+</body>
+
+</html>

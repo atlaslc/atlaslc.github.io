@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Atlas&#39;s blog</title>
+  
+  
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="http://atlaslc.github.io/"/>
+  <updated>2019-11-01T03:18:18.044Z</updated>
+  <id>http://atlaslc.github.io/</id>
+  
+  <author>
+    <name>Atlas</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>用nvidia-docker跑深度学习模型</title>
+    <link href="http://atlaslc.github.io/2019/10/30/yong-nvidia-docker-pao-shen-du-xue-xi-mo-xing/"/>
+    <id>http://atlaslc.github.io/2019/10/30/yong-nvidia-docker-pao-shen-du-xue-xi-mo-xing/</id>
+    <published>2019-10-30T08:27:58.000Z</published>
+    <updated>2019-11-01T03:18:18.044Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;背景&quot;&gt;&lt;a href=&quot;#背景&quot; class=&quot;headerlink&quot;
+        
+      
+    
+    </summary>
+    
+    
+    
+      <category term="深度学习 ssd nvidia docker" scheme="http://atlaslc.github.io/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0-ssd-nvidia-docker/"/>
+    
+  </entry>
+  
+</feed>
