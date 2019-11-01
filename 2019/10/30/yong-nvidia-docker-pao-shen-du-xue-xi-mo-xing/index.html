@@ -734,33 +734,33 @@ Main PID: 15621 <span class="token punctuation">(</span>code<span class="token o
     </div>
 
     
+        <link rel="stylesheet" href="/libs/gitalk/gitalk.css">
+<link rel="stylesheet" href="/css/my-gitalk.css">
 
-    
-        <link rel="stylesheet" href="/libs/gitment/gitment-default.css">
-<link rel="stylesheet" href="/css/gitment.css">
-
-<div class="gitment-card card" data-aos="fade-up">
+<div class="card gitalk-card" data-aos="fade-up">
     <div class="comment_headling" style="font-size: 20px; font-weight: 700; position: relative; left: 20px; top: 15px; padding-bottom: 5px;">
         <i class="fas fa-comments fa-fw" aria-hidden="true"></i>
         <span>评论</span>
     </div>
-    <div id="gitment-content" class="card-content"></div>
+    <div id="gitalk-container" class="card-content"></div>
 </div>
 
-<script src="/libs/gitment/gitment.js"></script>
+<script src="/libs/gitalk/gitalk.min.js"></script>
 <script>
-var gitment = new Gitment({
-    id: 'Wed Oct 30 2019 16:27:58 GMT+0800',
-    owner: 'atalslc',
-    repo: 'blog-comment',
-    oauth: {
-        client_id: 'ad036e20be24a149f62e',
-        client_secret: 'cca443a07a3fbe6c62ccfbb3cc0daf6b55c5be8e'
-    }
-});
+    let gitalk = new Gitalk({
+        clientID: 'ad036e20be24a149f62e',
+        clientSecret: 'cca443a07a3fbe6c62ccfbb3cc0daf6b55c5be8e',
+        repo: 'blog-comment',
+        owner: 'atalslc',
+        admin: "atalslc",
+        id: '2019-10-30T16-27-58',
+        distractionFreeMode: false  // Facebook-like distraction free mode
+    });
 
-gitment.render('gitment-content');
+    gitalk.render('gitalk-container');
 </script>
+    
+
     
 
     
